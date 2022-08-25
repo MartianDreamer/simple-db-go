@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"simple-db-go/command"
+	"simple-db-go/frontend"
+	"strings"
 )
 
 func main() {
@@ -13,10 +15,19 @@ func main() {
 	for {
 		cmdb, _, _ = reader.ReadLine()
 		cmds := string(cmdb)
-		if cmd, ok := command.COMMAND_MAP[cmds]; ok {
-			cmd()
-		} else {
-			fmt.Printf("%s is not recognized", cmds)
+		if isMetaCommand(cmds) {
+			if executeCmd, ok := command.COMMAND_MAP[cmds]; ok {
+				executeCmd()
+			} else {
+				fmt.Printf("%s is not recognized\n", cmds)
+			}
+			continue
 		}
+		bytes := frontend.CompileByteCode(cmds)
+		fmt.Println(bytes)
 	}
+}
+
+func isMetaCommand(command string) bool {
+	return strings.HasPrefix(command, ".")
 }

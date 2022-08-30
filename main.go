@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"simple-db-go/command"
 	"simple-db-go/frontend"
+	"simple-db-go/metacommand"
 	"strings"
 )
 
@@ -16,7 +16,7 @@ func main() {
 		cmdb, _, _ = reader.ReadLine()
 		cmds := string(cmdb)
 		if isMetaCommand(cmds) {
-			if executeCmd, ok := command.COMMAND_MAP[cmds]; ok {
+			if executeCmd, ok := metacommand.COMMAND_MAP[cmds]; ok {
 				executeCmd()
 			} else {
 				fmt.Printf("%s is not recognized\n", cmds)

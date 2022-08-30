@@ -21,6 +21,9 @@ func executeMetaCommand(cmds string) {
 }
 
 func executeStatement(cmds string) {
-	byteCode := frontend.CompileByteCode(cmds)
-	vm.ExecuteStatement(byteCode)
+	if statement, ok := frontend.PrepareStatement(cmds); ok {
+		vm.ExecuteStatement(statement)
+	} else {
+		fmt.Printf("%s is not recognized\n", cmds)
+	}
 }

@@ -1,8 +1,15 @@
 package vm
 
-import "fmt"
+import (
+	"fmt"
+	"simple-db-go/frontend"
+)
 
-func ExecuteStatement(byteCode []byte) {
-	//TODO: implement a sql vm
-	fmt.Println(byteCode)
+func ExecuteStatement(statement frontend.Statement) {
+	switch statement.StatementType {
+	case frontend.InsertStatement:
+		fmt.Println(statement.Content)
+	case frontend.SelectStatement:
+		fmt.Println(statement.Content)
+	}
 }

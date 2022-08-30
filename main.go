@@ -2,11 +2,7 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"os"
-	"simple-db-go/frontend"
-	"simple-db-go/metacommand"
-	"strings"
 )
 
 func main() {
@@ -16,18 +12,9 @@ func main() {
 		cmdb, _, _ = reader.ReadLine()
 		cmds := string(cmdb)
 		if isMetaCommand(cmds) {
-			if executeCmd, ok := metacommand.COMMAND_MAP[cmds]; ok {
-				executeCmd()
-			} else {
-				fmt.Printf("%s is not recognized\n", cmds)
-			}
+			executeMetaCommand(cmds)
 			continue
 		}
-		bytes := frontend.CompileByteCode(cmds)
-		fmt.Println(bytes)
+		executeStatement(cmds)
 	}
-}
-
-func isMetaCommand(command string) bool {
-	return strings.HasPrefix(command, ".")
 }

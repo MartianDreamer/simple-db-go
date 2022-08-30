@@ -1,5 +1,8 @@
 package vm
 
-func ExecuteStatement() {
-	//TODO implement a sql vm
+import "fmt"
+
+func ExecuteStatement(byteCode []byte) {
+	//TODO: implement a sql vm
+	fmt.Println(byteCode)
 }

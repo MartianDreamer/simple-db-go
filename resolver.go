@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"simple-db-go/command"
 	"simple-db-go/frontend"
-	"simple-db-go/metacommand"
 	"simple-db-go/vm"
 	"strings"
 )
@@ -13,7 +13,7 @@ func isMetaCommand(command string) bool {
 }
 
 func executeMetaCommand(cmds string) {
-	if executeCmd, ok := metacommand.COMMAND_MAP[cmds]; ok {
+	if executeCmd, ok := command.COMMAND_MAP[cmds]; ok {
 		executeCmd()
 	} else {
 		fmt.Printf("%s is not recognized\n", cmds)

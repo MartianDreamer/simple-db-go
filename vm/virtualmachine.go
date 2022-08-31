@@ -14,12 +14,14 @@ func ExecuteStatement(statement frontend.Statement) {
 		}
 		rowBytes := frontend.RowToBytes(insertRow)
 		whereToWrite := TABLE.RowSlot(TABLE.RowNumber)
-		copy((*whereToWrite)[:], rowBytes[:])
+		copy(whereToWrite[:], rowBytes[:])
 		TABLE.RowNumber += 1
 	case frontend.SelectStatement:
 		fmt.Println(statement.Content)
 		lastRowBytes := TABLE.RowSlot(TABLE.RowNumber - 1)
-		convertedRow := frontend.BytesToRow(*(*[295]byte)((*lastRowBytes)[:295]))
+		var lastRow [295]byte
+		copy(lastRow[:], lastRowBytes[:295])
+		convertedRow := frontend.BytesToRow(lastRow)
 		fmt.Printf("%v %v %v \n", convertedRow.Id, convertedRow.Username, convertedRow.Email)
 	}
 }

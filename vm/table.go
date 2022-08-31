@@ -8,18 +8,20 @@ const (
 )
 
 type Page struct {
-	Bytes *[PageSize]byte
+	Bytes [PageSize]byte
 }
 
 type Table struct {
 	RowNumber uint32
-	Pages     *[MaxPage]Page
+	Pages     [MaxPage]*Page
 }
 
-func (t Table) RowSlot(rowNumber uint32) *[]byte {
+func (t *Table) RowSlot(rowNumber uint32) []byte {
 	pageNumber := rowNumber / uint32(RowPerPage)
 	rowOffset := rowNumber % uint32(RowPerPage)
+	if t.Pages[pageNumber] == nil {
+		t.Pages[pageNumber] = &Page{[PageSize]byte{}}
+	}
 	page := t.Pages[pageNumber]
-	rs := page.Bytes[rowOffset:]
-	return &rs
+	return page.Bytes[rowOffset:]
 }

@@ -20,7 +20,10 @@ func PrepareInsertStatement(statement Statement) (result Row, err error) {
 	if statement.StatementType != InsertStatement {
 		return result, errors.New("the statement is not an insert statement")
 	}
-	fmt.Scanf(statement.Content, "insert %v %v %v", result.Id, result.Username, result.Email)
+	var Username, Email string
+	fmt.Sscanf(statement.Content, "insert %v %v %v", &result.Id, &Username, &Email)
+	copy(result.Username[:], []byte(Username))
+	copy(result.Email[:], []byte(Email))
 	return result, nil
 }
 

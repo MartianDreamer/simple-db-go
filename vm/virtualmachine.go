@@ -13,16 +13,13 @@ func ExecuteStatement(statement frontend.Statement) {
 			return
 		}
 		rowBytes := frontend.RowToBytes(insertRow)
-		bytes := TABLE.RowSlot(TABLE.RowNumber)
-		copy(bytes[:], rowBytes[:])
+		whereToWrite := TABLE.RowSlot(TABLE.RowNumber)
+		copy((*whereToWrite)[:], rowBytes[:])
+		TABLE.RowNumber += 1
 	case frontend.SelectStatement:
 		fmt.Println(statement.Content)
+		lastRowBytes := TABLE.RowSlot(TABLE.RowNumber - 1)
+		convertedRow := frontend.BytesToRow(*(*[295]byte)((*lastRowBytes)[:295]))
+		fmt.Printf("%v %v %v \n", convertedRow.Id, convertedRow.Username, convertedRow.Email)
 	}
-}
-
-func (t Table) RowSlot(rowNumber uint32) []byte {
-	pageNumber := rowNumber / uint32(RowPerPage)
-	rowOffset := rowNumber % uint32(RowPerPage)
-	page := t.Pages[pageNumber]
-	return page.Bytes[rowOffset:]
 }

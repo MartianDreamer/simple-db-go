@@ -5,9 +5,8 @@ import (
 	"simple-db-go/frontend"
 )
 
-func Serialize(insertRow frontend.Row) {
+func Serialize(insertRow frontend.Row, cursor *backend.Cursor) {
 	rowBytes := frontend.RowToBytes(insertRow)
-	cursor := backend.TableEnd(backend.TABLE)
 	copy(cursor.GetValue(), rowBytes[:])
 	backend.TABLE.RowNumber += 1
 }

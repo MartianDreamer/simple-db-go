@@ -17,7 +17,8 @@ func ExecuteStatement(statement frontend.Statement) {
 		if err != nil {
 			break
 		}
-		Serialize(insertRow)
+		cursor := backend.TableEnd(backend.TABLE)
+		Serialize(insertRow, cursor)
 		fmt.Println("db > Executed.")
 		fmt.Printf("db > (%v, %v, %v)\n", insertRow.Id, string(insertRow.Username[:]), string(insertRow.Email[:]))
 	case frontend.SelectStatement:
@@ -26,10 +27,10 @@ func ExecuteStatement(statement frontend.Statement) {
 			break
 		}
 		cursor := backend.TableStart(backend.TABLE)
+		fmt.Println("db > Executed.")
 		for !cursor.EndOfTable {
 			curRow := cursor.GetValue()
 			convertedRow := Deserialize(curRow)
-			fmt.Println("db > Executed.")
 			fmt.Printf("db > (%v %v %v)\n", convertedRow.Id, string(convertedRow.Username[:]), string(convertedRow.Email[:]))
 			cursor.Advance()
 		}

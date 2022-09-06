@@ -16,9 +16,35 @@ type Table struct {
 	Pager     *Pager
 }
 
-func NewTable(tableName string) (rs *Table) {
-	rs = &Table{0, OpenPager(tableName)}
+func DbOpen(dbName string) (rs *Table) {
+	pager := OpenPager(dbName)
+	rowNumber := pager.fileLength / int64(RowSize)
+	rs = &Table{uint32(rowNumber), pager}
 	return rs
+}
+
+func (t *Table) DbClose() {
+	pageCount := t.RowNumber / uint32(RowPerPage)
+	for i := 0; i < int(pageCount); i++ {
+		if t.Pager.Pages[i] == nil {
+			continue
+		}
+		t.Pager.flushPage(uint8(i), RowPerPage)
+		t.Pager.Pages[i] = nil
+	}
+	partialPageRow := t.RowNumber % uint32(RowPerPage)
+	if partialPageRow > 0 {
+		lastPage := pageCount
+		if t.Pager.Pages[lastPage] != nil {
+			t.Pager.flushPage(uint8(lastPage), uint8(partialPageRow))
+			t.Pager.Pages[lastPage] = nil
+		}
+	}
+	err := t.Pager.fileDescriptor.Close()
+	if err != nil {
+		panic("Failed to close db")
+	}
+	t = nil
 }
 
 func (t *Table) RowSlot(rowNumber uint32) []byte {

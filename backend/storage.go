@@ -1,3 +1,3 @@
 package backend
 
-var TABLE = NewTable("Default")
+var TABLE = DbOpen("Default.db")

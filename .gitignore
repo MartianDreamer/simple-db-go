@@ -3,4 +3,5 @@
 # excutable
 *.exe
 *.o
+*.db
 bin

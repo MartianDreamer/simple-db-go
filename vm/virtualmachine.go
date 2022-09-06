@@ -9,6 +9,10 @@ import (
 func ExecuteStatement(statement frontend.Statement) {
 	switch statement.StatementType {
 	case frontend.InsertStatement:
+		if backend.TABLE == nil {
+			fmt.Print("Use a databse\n")
+			break
+		}
 		insertRow, err := frontend.PrepareInsertStatement(statement)
 		if err != nil {
 			return
@@ -20,6 +24,10 @@ func ExecuteStatement(statement frontend.Statement) {
 		fmt.Println("db > Executed.")
 		fmt.Printf("db > (%v, %v, %v)\n", insertRow.Id, string(insertRow.Username[:]), string(insertRow.Email[:]))
 	case frontend.SelectStatement:
+		if backend.TABLE == nil {
+			fmt.Print("Use a databse\n")
+			break
+		}
 		for i := 0; i < int(backend.TABLE.RowNumber); i++ {
 			lastRowBytes := backend.TABLE.RowSlot(uint32(i))
 			var lastRow [backend.RowSize]byte
@@ -28,5 +36,8 @@ func ExecuteStatement(statement frontend.Statement) {
 			fmt.Println("db > Executed.")
 			fmt.Printf("db > (%v %v %v)\n", convertedRow.Id, string(convertedRow.Username[:]), string(convertedRow.Email[:]))
 		}
+	case frontend.UseStatement:
+		fileName, _ := frontend.PrepareUseStatement(statement)
+		backend.TABLE = backend.DbOpen(fileName + ".db")
 	}
 }

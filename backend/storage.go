@@ -1,3 +1,3 @@
 package backend
 
-var TABLE = DbOpen("Default.db")
+var TABLE *Table = nil

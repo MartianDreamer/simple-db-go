@@ -12,6 +12,8 @@ func PrepareStatement(command string) (result Statement, Ok bool) {
 		return Statement{command, InsertStatement}, true
 	} else if strings.HasPrefix(command, "select") {
 		return Statement{command, SelectStatement}, true
+	} else if strings.HasPrefix(command, "use") {
+		return Statement{command, UseStatement}, true
 	}
 	return Statement{}, false
 }
@@ -25,6 +27,14 @@ func PrepareInsertStatement(statement Statement) (result Row, err error) {
 	copy(result.Username[:], []byte(Username))
 	copy(result.Email[:], []byte(Email))
 	return result, nil
+}
+
+func PrepareUseStatement(statement Statement) (fileName string, err error) {
+	if statement.StatementType != UseStatement {
+		return fileName, errors.New("the statement is not use statement")
+	}
+	fmt.Sscanf(statement.Content, "use %v", &fileName)
+	return fileName, nil
 }
 
 func RowToBytes(row Row) (rs [295]byte) {

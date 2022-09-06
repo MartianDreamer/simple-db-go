@@ -5,6 +5,7 @@ type StatementType int8
 const (
 	InsertStatement StatementType = iota
 	SelectStatement
+	UseStatement
 )
 
 type Statement struct {
@@ -17,4 +18,3 @@ type Row struct {
 	Username [32]byte
 	Email    [255]byte
 }
-

@@ -15,12 +15,9 @@ func ExecuteStatement(statement frontend.Statement) {
 		}
 		insertRow, err := frontend.PrepareInsertStatement(statement)
 		if err != nil {
-			return
+			break
 		}
-		rowBytes := frontend.RowToBytes(insertRow)
-		whereToWrite := backend.TABLE.RowSlot(backend.TABLE.RowNumber)
-		copy(whereToWrite[:], rowBytes[:])
-		backend.TABLE.RowNumber += 1
+		Serialize(insertRow)
 		fmt.Println("db > Executed.")
 		fmt.Printf("db > (%v, %v, %v)\n", insertRow.Id, string(insertRow.Username[:]), string(insertRow.Email[:]))
 	case frontend.SelectStatement:
@@ -28,16 +25,18 @@ func ExecuteStatement(statement frontend.Statement) {
 			fmt.Print("Use a databse\n")
 			break
 		}
-		for i := 0; i < int(backend.TABLE.RowNumber); i++ {
-			lastRowBytes := backend.TABLE.RowSlot(uint32(i))
-			var lastRow [backend.RowSize]byte
-			copy(lastRow[:], lastRowBytes[:backend.RowSize])
-			convertedRow := frontend.BytesToRow(lastRow)
+		cursor := backend.TableStart(backend.TABLE)
+		for !cursor.EndOfTable {
+			curRow := cursor.GetValue()
+			convertedRow := Deserialize(curRow)
 			fmt.Println("db > Executed.")
 			fmt.Printf("db > (%v %v %v)\n", convertedRow.Id, string(convertedRow.Username[:]), string(convertedRow.Email[:]))
+			cursor.Advance()
 		}
 	case frontend.UseStatement:
 		fileName, _ := frontend.PrepareUseStatement(statement)
 		backend.TABLE = backend.DbOpen(fileName + ".db")
+		fmt.Println("db > Executed.")
+		fmt.Printf("db > use %v\n", fileName)
 	}
 }

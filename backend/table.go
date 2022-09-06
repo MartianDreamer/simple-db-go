@@ -3,8 +3,8 @@ package backend
 const (
 	PageSize   uint16 = 4096
 	MaxPage    uint8  = 100
-	RowSize    uint16 = 291
-	RowPerPage uint8  = 4096 / 291
+	RowSize    uint16 = 295
+	RowPerPage uint8  = 4096 / 295
 )
 
 type Page struct {
@@ -17,8 +17,7 @@ type Table struct {
 }
 
 func NewTable(tableName string) (rs *Table) {
-	rs.RowNumber = 0
-	rs.Pager = OpenPager(tableName)
+	rs = &Table{0, OpenPager(tableName)}
 	return rs
 }
 

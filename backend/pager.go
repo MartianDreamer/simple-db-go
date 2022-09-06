@@ -17,9 +17,7 @@ func OpenPager(fileName string) (rs *Pager) {
 	if err != nil {
 		panic("Failed to get file info")
 	}
-	rs.fileDescriptor = file
-	rs.fileLength = fileInfo.Size()
-	rs.Pages = [MaxPage]*Page{}
+	rs = &Pager{file, fileInfo.Size(), [MaxPage]*Page{}}
 	return rs
 }
 

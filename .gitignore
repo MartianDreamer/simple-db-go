@@ -1,5 +1,6 @@
 # vscode
-.vscode
+.vscode/*
 # excutable
 *.exe
 *.o
+bin

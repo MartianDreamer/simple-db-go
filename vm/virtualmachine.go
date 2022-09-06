@@ -20,11 +20,13 @@ func ExecuteStatement(statement frontend.Statement) {
 		fmt.Println("db > Executed.")
 		fmt.Printf("db > (%v, %v, %v)\n", insertRow.Id, string(insertRow.Username[:]), string(insertRow.Email[:]))
 	case frontend.SelectStatement:
-		lastRowBytes := backend.TABLE.RowSlot(backend.TABLE.RowNumber - 1)
-		var lastRow [295]byte
-		copy(lastRow[:], lastRowBytes[:295])
-		convertedRow := frontend.BytesToRow(lastRow)
-		fmt.Println("db > Executed.")
-		fmt.Printf("db > (%v %v %v)\n", convertedRow.Id, string(convertedRow.Username[:]), string(convertedRow.Email[:]))
+		for i := 0; i < int(backend.TABLE.RowNumber); i++ {
+			lastRowBytes := backend.TABLE.RowSlot(uint32(i))
+			var lastRow [backend.RowSize]byte
+			copy(lastRow[:], lastRowBytes[:backend.RowSize])
+			convertedRow := frontend.BytesToRow(lastRow)
+			fmt.Println("db > Executed.")
+			fmt.Printf("db > (%v %v %v)\n", convertedRow.Id, string(convertedRow.Username[:]), string(convertedRow.Email[:]))
+		}
 	}
 }
